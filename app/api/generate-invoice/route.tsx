@@ -3,8 +3,9 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import sharp from "sharp";
 import { InvoicePDF } from "../../components/InvoicePDF";
 import { ListingData } from "../../lib/types";
+import { isValidUuid } from "../../lib/utils";
 
-const GARAGE_API_URL = "https://garage-backend.onrender.com/listings";
+const GARAGE_API_URL = process.env.GARAGE_API_URL || "https://garage-backend.onrender.com/listings";
 
 // Fetch image, resize it, and convert to base64 data URL
 async function fetchImageAsBase64(url: string): Promise<string | null> {
@@ -45,8 +46,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Validate UUID format
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
+  if (!isValidUuid(id)) {
     return NextResponse.json(
       { error: "Invalid listing ID format" },
       { status: 400 }

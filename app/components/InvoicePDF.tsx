@@ -414,8 +414,11 @@ export function InvoicePDF({ listing, imageData }: InvoicePDFProps) {
           const features = listing.listingDescription
             .split(/[\r\n]+/)
             .map((line) => line
-              // Remove quoted-printable encoding artifacts (=X or =XX patterns)
-              .replace(/=[0-9A-Fa-f]{1,2}/g, " ")
+              // Remove quoted-printable encoding artifacts
+              // Handle malformed =X patterns (like =9Dimensions where =9 is a tab encoding)
+              .replace(/=([0-9])([A-Z])/g, "$2")
+              // Then: standard =XX hex patterns
+              .replace(/=[0-9A-Fa-f]{2}/g, " ")
               // Remove all non-printable ASCII and weird characters, keep only standard printable
               .replace(/[^\x20-\x7E\u00A0-\u00FF]/g, " ")
               // Normalize whitespace

@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Garage Quote Generator
 
-## Getting Started
+Generate PDF quotes from Garage fire truck listings. Paste a URL, get a PDF.
 
-First, run the development server:
+## What it does
+
+Fire departments often need a paper quote to show their board before purchasing a truck. This app takes any [Garage](https://www.shopgarage.com) listing URL and generates a clean, printable PDF with all the vehicle details.
+
+The tricky part was handling the listing descriptions - they're unstructured text with specs, features, and promotional copy all mixed together. The app parses these and formats them nicely (headers get bolded, key-value pairs get styled, etc).
+
+## Running locally
 
 ```bash
+git clone https://github.com/elkinal/garage-alexey-elkin.git
+cd garage-alexey-elkin
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How it works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. User pastes a Garage listing URL
+2. App extracts the UUID from the URL
+3. Calls Garage's API to get listing data
+4. Fetches and compresses the listing image (some are 6MB+, had to use Sharp to resize them or the PDF library chokes)
+5. Renders a PDF with react-pdf
+6. Downloads to browser
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── page.tsx                      # The main form UI
+├── api/generate-invoice/route.tsx  # Does the actual PDF generation
+├── components/InvoicePDF.tsx     # The PDF template
+└── lib/
+    ├── types.ts                  # TypeScript types for listing data
+    └── utils.ts                  # Helper functions (UUID parsing, text cleanup, etc)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm test
+```
 
-## Deploy on Vercel
+Tests cover the utility functions - UUID extraction, text cleanup, feature type detection, etc.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 15
+- @react-pdf/renderer for PDF generation
+- Sharp for image compression
+- TypeScript
+- Tailwind for the web UI
+
+## Notes
+
+The Garage API doesn't have official docs, so I figured out the endpoints by inspecting network requests on their site. The main one is `GET /listings/{uuid}` on `garage-backend.onrender.com`.
+
+Some listing images were failing to load in the PDF - turned out they were just too big. Fixed by fetching them server-side and compressing with Sharp before embedding.
+
+The feature text parsing is regex-based and definitely not perfect, but it handles the common patterns I saw in the listings (ALL CAPS headers, "Key: Value" specs, etc).

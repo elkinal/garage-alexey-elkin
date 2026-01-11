@@ -32,12 +32,20 @@ Then open http://localhost:3000
 
 ```
 app/
-├── page.tsx                      # The main form UI
-├── api/generate-invoice/route.tsx  # Does the actual PDF generation
-├── components/InvoicePDF.tsx     # The PDF template
+├── page.tsx                        # The main form UI
+├── api/generate-invoice/route.tsx  # PDF generation endpoint
+├── components/
+│   ├── InvoicePDF.tsx              # Main PDF document
+│   ├── ErrorBoundary.tsx           # React error boundary
+│   └── pdf/                        # PDF sub-components
+│       ├── InvoiceHeader.tsx
+│       ├── InvoiceSpecs.tsx
+│       ├── InvoiceFeatures.tsx
+│       ├── InvoiceFooter.tsx
+│       └── styles.ts
 └── lib/
-    ├── types.ts                  # TypeScript types for listing data
-    └── utils.ts                  # Helper functions (UUID parsing, text cleanup, etc)
+    ├── types.ts                    # TypeScript types
+    └── utils.ts                    # Helpers (UUID parsing, text cleanup)
 ```
 
 ## Testing
@@ -46,7 +54,7 @@ app/
 npm test
 ```
 
-Tests cover the utility functions - UUID extraction, text cleanup, feature type detection, etc.
+53 tests covering utility functions, data handling, and business logic.
 
 ## Tech
 

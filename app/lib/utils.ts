@@ -38,8 +38,6 @@ export function cleanFeatureLine(line: string): string {
     // Normalize whitespace
     .replace(/^\s+|\s+$/g, "")
     .replace(/\s+/g, " ")
-    // Remove leading bullet prefixes (•, ·, -, *, >) with optional space
-    .replace(/^[•·\-*>]\s*/, "")
     // Fix concatenated numbers+letters (e.g., "723Headroom" -> "723 Headroom")
     .replace(/(\d)([A-Za-z])/g, "$1 $2")
     .replace(/([A-Za-z])(\d)/g, "$1 $2");

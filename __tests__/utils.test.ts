@@ -97,6 +97,27 @@ describe('cleanFeatureLine', () => {
   it('handles empty string without crashing', () => {
     expect(cleanFeatureLine('')).toBe('');
   });
+
+  // Bullet prefix stripping
+  it('removes bullet prefix •', () => {
+    expect(cleanFeatureLine('• LED Scene Lights')).toBe('LED Scene Lights');
+  });
+
+  it('removes middle dot prefix ·', () => {
+    expect(cleanFeatureLine('· Weight 150 and UP')).toBe('Weight 150 and UP');
+  });
+
+  it('removes dash prefix -', () => {
+    expect(cleanFeatureLine('-LED Headlights')).toBe('LED Headlights');
+  });
+
+  it('removes dash prefix with space', () => {
+    expect(cleanFeatureLine('- H Style Stabilizers')).toBe('H Style Stabilizers');
+  });
+
+  it('removes asterisk prefix', () => {
+    expect(cleanFeatureLine('* Optional feature')).toBe('Optional feature');
+  });
 });
 
 describe('getFeatureType', () => {
